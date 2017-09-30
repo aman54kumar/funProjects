@@ -27,20 +27,52 @@ def checkCondition():
             checkCondition()
 
 
+
 def buyTicket() -> list:
     """
 
     :rtype: list
     """
-    print("Choose 6 numbers from 1 to 20")
     inputNumbers = []
-    for i in range(6):
-        inputNumbers.append(int(input()))
+    inputNum = input("Choose 6 unique numbers from 1 to 20 separated by commas: ")
+    inputNumbers = list(map(int, inputNum.split(',')))
+    while len(inputNumbers) != 6:
+        inputNumbers = checkDuplicate(inputNumbers)
+
+        if len(inputNumbers) < 6:
+            leftOverList = []
+            leftOver = input("Please enter " + str(6 - len(inputNumbers)) + " more numbers: ")
+            leftOverList = list(map(int, leftOver.split(',')))
+            if len(leftOverList):
+                inputNumbers = inputNumbers + leftOverList
+                continue
+
+
+        if len(inputNumbers) > 6:
+            inputNumbers = inputNumbers[:6]
+
+        checkNumberInRange(inputNumbers)
+
 
     global balance
     balance -= 50
     print("You have choosen numbers {} and USD 50 has been deducted from your balance".format(inputNumbers))
     return inputNumbers
+
+
+def checkNumberInRange(inputNumbers):
+    for i in inputNumbers:
+        if i > 20 or i < 1:
+            loc = inputNumbers.index(i)
+            additional = input(str(i) + " is out of range. Please enter another number between 1-20: ")
+            inputNumbers[loc] = additional
+
+
+def checkDuplicate(inputNumbers):
+    import collections
+    inputNumbers = [item for item, count in collections.Counter(inputNumbers).items() if count == 1]
+    return inputNumbers
+
 
 def winningTicket():
     winningNumbers = random.sample(range(1, 20), 6)
@@ -73,7 +105,7 @@ def checkBalance():
     print("Your balance is {} USD".format(balance))
 
 def leaveGame():
-    print("Your balance is " + balance)
+    print("Your balance is " + str(balance))
     print("Thanks you for being with us. See you again!!!")
 
 def playAgainOrLeave():
